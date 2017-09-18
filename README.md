@@ -35,20 +35,31 @@ COMPONENT
   
 SERVICE
 
-basic service
+Basic service
 
 
 DIRECTIVE
 
-basic directive
+Basic directive
 
 ## Options
 
-PREFIX_FOR_SELECTOR : choose a custom prefix for the component selector(default:'')
+Open the script in your text editor : 
 
-CSS_FILE_TYPE : choose the css file type : css, scss, sass...(default:css)
+PREFIX_FOR_SELECTOR  
+
+choose a custom prefix for the component selector(default:'')
+
+
+CSS_FILE_TYPE 
+
+choose the css file type : css, scss, sass...(default:css)
 
 
 ## Next
 
-TODO
+  - add broadcaster file for event
+  - add basic route guard
+  - add basic master/detail module
+  - add more complete routing
+  
