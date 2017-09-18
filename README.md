@@ -19,7 +19,7 @@ bash angulator.sh
 
 You can generate : 
 
-MODULE
+- Module
 
   - Basic (module, component, html, css)
   - Basic with service
@@ -27,20 +27,16 @@ MODULE
   - Global (basic, service, routing)
   - Module + component only
   
-COMPONENT
+- Component
 
   - Basic (component, html, css)
   - Basic with service
   - Component only
   
-SERVICE
+- Service
 
-Basic service
+- Directive
 
-
-DIRECTIVE
-
-Basic directive
 
 ## Options
 
