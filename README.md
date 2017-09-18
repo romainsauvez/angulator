@@ -1,0 +1,2 @@
+# angulator
+Angular file generator
