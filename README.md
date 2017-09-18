@@ -12,8 +12,9 @@ Put the script in the app folder of your Angular Project
 
 In the Terminal of your IDE or computer, go to the app folder and enter : 
 
-bash angulator.sh
-
+```bash
+$ bash angulator.sh
+```
 
 ##  Description
 
