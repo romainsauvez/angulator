@@ -42,12 +42,9 @@ You can generate :
 
 Open the script in your text editor and modify : 
 
- - PREFIX_FOR_SELECTOR  
-  choose a custom prefix for the component selector(default:'')
+- PREFIX_FOR_SELECTOR : choose a custom prefix for the component selector(default:'')
 
-
-- CSS_FILE_TYPE 
-  choose the css file type : css, scss, sass...(default:css)
+- CSS_FILE_TYPE : choose the css file type : css, scss, sass...(default:css)
 
 
 ## Next
