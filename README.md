@@ -6,7 +6,7 @@ Bash script for generate angular(2+) files
 
 ## Install 
 
-Put the script in the app folder of your Angular Project
+Add the script in the app folder of your Angular Project
 
 ##  Use
 
@@ -18,10 +18,9 @@ $ bash angulator.sh
 
 ##  Description
 
-You can generate : 
+Generate angular(2+) files : 
 
 - Module
-
   - Basic (module, component, html, css)
   - Basic with service
   - Basic with routing
@@ -29,14 +28,13 @@ You can generate :
   - Module + component only
   
 - Component
-
   - Basic (component, html, css)
   - Basic with service
   - Component only
   
-- Service
+- Service (basic)
 
-- Directive
+- Directive (basic)
 
 
 ## Options
