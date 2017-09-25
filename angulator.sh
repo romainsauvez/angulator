@@ -238,15 +238,6 @@ fi
 # creation of module file
 function generateModule {
 
-if [ $WITH_SERVICE -eq 1 ]; then
-    generateService
-fi
-
-if [ $WITH_HTML -eq 1 ]; then
-    generateHtml
-    generateCss
-fi
-
 if [ $WITH_ROUTING -eq 1 ]; then
     generateRouting
 fi
