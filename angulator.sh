@@ -20,10 +20,10 @@
 # OPTIONS ###########################################################
 
 # prefix for the component selector
-PREFIX_FOR_SELECTOR=''
+PREFIX_FOR_SELECTOR='app'
 
 # specify css file type (css, scss, sass..)
-CSS_FILE_TYPE='css'
+CSS_FILE_TYPE='scss'
 
 #####################################################################
 
@@ -191,7 +191,7 @@ fi
 cat <<EOT >> $completeFilePath
 
 @Component({
-  selector: '$PREFIX_FOR_SELECTOR$CURRENT_NAME',
+  selector: '$PREFIX_FOR_SELECTOR-$CURRENT_NAME',
 EOT
 
 if [ $WITH_SERVICE -eq 1 ]; then
@@ -203,7 +203,7 @@ fi
 if [ $WITH_HTML -eq 1 ]; then
 cat <<EOT >> $completeFilePath
   templateUrl: './$CURRENT_NAME.component.html',
-  styleUrls:  ['./$CURRENT_NAME.component.css']
+  styleUrls:  ['./$CURRENT_NAME.component.$CSS_FILE_TYPE']
 EOT
 fi
 
