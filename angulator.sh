@@ -32,10 +32,12 @@ CSS_FILE_TYPE='scss'
 # color
 PURPLE='\033[0;35m'
 YELLOW='\033[0;33m'
-RED='\033[0;31m'
+RED='\033[1;31m'
 GREEN='\033[0;32m'
+LBLUE='\033[0;34m'
 BOLD='\033[1m'
 RESET='\033[0m'
+UNDERLINE='\033[4m'
 
 # name of the created element
 CURRENT_NAME=''
@@ -57,7 +59,7 @@ WITH_ROUTING=0
 
 WITH_HTML=1
 
-
+SERVICE_NAME=''
 
 # creation of html file
 function generateHtml {
@@ -217,7 +219,7 @@ EOT
 
 if [ $WITH_SERVICE -eq 1 ]; then
 cat <<EOT >> $completeFilePath
-    constructor(private ${CURRENT_NAME}Service: ${CURRENT_NAME_CAPITAL}Service) {
+    constructor(private ${SERVICE_NAME}Service: ${CURRENT_NAME_CAPITAL}Service) {
 
     }
 }
@@ -298,7 +300,8 @@ function displayHeader {
  clear
  echo -e ""
  echo -e ""
- echo -e "               ${BOLD}${PURPLE}ANGULATOR${RESET}"
+ echo -e "               ${BOLD}${PURPLE}ANGULATOR${RESET} ${YELLOW}[angular file generator]${RESET}"
+ echo -e ""
  echo -e ""
 }
 
@@ -388,13 +391,12 @@ function displayFinalProcess {
 function displayNameForms {
  displayHeader
 
- echo -e "               Define name of the" $CURRENT_ELEMENT ":"
+ echo -e "               ${LBLUE}1) Define name of "$CURRENT_ELEMENT"${RESET}"
  echo -e ""
- echo -e "                 ${RED}Can not be empty.${RESET}"
- echo -e "                 ${RED}Must be camel case or dash case${RESET}"
- echo -e "                 ${RED}Must not contain any special characters or dot (exept -).${RESET}"
+ echo -e "                ${YELLOW}Can not be empty."
+ echo -e "                Use camelCase or dash-case.${RESET}"
  echo -e ""
- read -p '               Enter the name (and press enter) : ' element_names
+ read -p $'               Enter name (and press enter) : ' element_names
 
  if [ -z $element_names ]; then
     clear
@@ -412,6 +414,20 @@ function displayNameForms {
  CURRENT_NAME=$name
  CURRENT_NAME_CAPITAL=$nameCapital
 
+COUNT=0
+for i in "${ROOTNAME[@]}"; do
+    if [ $COUNT -eq 0 ]; then
+    namelow=`echo ${i:0:1} | tr  '[a-z]' '[a-z]'`${i:1}
+    else
+    namelow=`echo ${i:0:1} | tr  '[a-z]' '[A-Z]'`${i:1}
+    fi
+    nameService="$nameService$namelow"
+
+    COUNT=1
+ done
+
+ SERVICE_NAME=$nameService
+
  displayPathForms
 
 }
@@ -422,12 +438,9 @@ function displayPathForms {
 
  displayHeader
 
- echo -e "               Define path of the" $CURRENT_ELEMENT ":"
+ echo -e "               ${LBLUE}Define path of the" $CURRENT_ELEMENT ":${RESET}"
  echo -e ""
- echo -e "                 ${RED}If empty, will be created at the same level as this script.${RESET}"
- echo -e "                 ${RED}Do not specify the folder name of the" $CURRENT_ELEMENT", it will be created by default.${RESET}"
- echo -e ""
- read -p '               Enter the path (and press enter) : ' path_names
+ read -p '               Enter path (and press enter) : src/app/' path_names
 
  #on test si l'emplacement est vide
  if [ $path_names ]; then
@@ -442,7 +455,7 @@ function displayModuleMenu {
 
  displayHeader
 
- echo -e "               Choose your module type :"
+ echo -e "               ${LBLUE}Choose module type :${RESET}"
  echo -e ""
  echo -e "               ${YELLOW}1${RESET}  Basic (module, component, html, css)"
  echo -e "               ${YELLOW}2${RESET}  Basic with service"
@@ -492,7 +505,7 @@ function displayComponentMenu {
 
  displayHeader
 
- echo -e "               Choose your component type :"
+ echo -e "               ${LBLUE}Choose component type :${RESET}"
  echo -e ""
  echo -e "               ${YELLOW}1${RESET}  Basic (component, html, css)"
  echo -e "               ${YELLOW}2${RESET}  Basic with service"
@@ -531,14 +544,14 @@ function displayMainMenu {
 
  displayHeader
 
- echo -e "               What do you want to create ?"
+ echo -e "               ${LBLUE}Choose file to create : ${RESET}"
  echo -e ""
  echo -e "               ${YELLOW}1${RESET}  Module"
  echo -e "               ${YELLOW}2${RESET}  Component"
  echo -e "               ${YELLOW}3${RESET}  Service"
  echo -e "               ${YELLOW}4${RESET}  Directive"
  echo -e ""
- echo -e "               5  Quit"
+ echo -e "               ${YELLOW}5${RESET}  Quit"
  echo -e ""
  read -s -p "               Enter your choice [1-5] " -n1 choice
 
@@ -563,40 +576,13 @@ function displayMainMenu {
  esac
 }
 
-# detect if this script is in the app folder
-# of an AngularJs project
-function detectAppFolder {
 
- clear
-
- # get the parent folder of this script
- completPath="$PWD"
- IFS='/' read -ra ROOTNAME <<< "$completPath"
- currentFolder=${ROOTNAME[${#ROOTNAME[@]}-1]}
-
- # folder to detect
- folderNeeded='app'
-
- if [ "$currentFolder" == "$folderNeeded" ]; then
-    displayMainMenu
- else
-    displayHeader
-    echo -e "               ${RED}Warning :${RESET} this script is not in the app folder "
-    echo -e "               of your Angular project."
-    echo -e ""
-    read -p "               Press enter to continue..."
-    displayMainMenu
-
- fi
-}
 
 # start application ==============================================
 
-detectAppFolder
+displayMainMenu
 
-#displayMainMenu
-
-# ==============================================
+# ================================================================
 
 
 
