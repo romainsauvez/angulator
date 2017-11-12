@@ -6,11 +6,11 @@ Bash script for generate angular(2+) files
 
 ## Install 
 
-Add the script in the app folder of your Angular Project
+Add the script in the root folder of your Angular Project, near the src folder
 
 ##  Use
 
-In the Terminal of your IDE or computer, go to the app folder and enter : 
+In the Terminal of your IDE or computer, just enter :
 
 ```bash
 $ bash angulator.sh

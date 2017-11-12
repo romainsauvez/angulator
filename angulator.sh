@@ -34,7 +34,8 @@ PURPLE='\033[0;35m'
 YELLOW='\033[0;33m'
 RED='\033[1;31m'
 GREEN='\033[0;32m'
-LBLUE='\033[0;34m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 BOLD='\033[1m'
 RESET='\033[0m'
 UNDERLINE='\033[4m'
@@ -236,7 +237,6 @@ fi
 }
 
 
-
 # creation of module file
 function generateModule {
 
@@ -299,9 +299,7 @@ EOT
 function displayHeader {
  clear
  echo -e ""
- echo -e ""
- echo -e "               ${BOLD}${PURPLE}ANGULATOR${RESET} ${YELLOW}[angular file generator]${RESET}"
- echo -e ""
+ echo -e "          ${BOLD}${BLUE}ANGULATOR${RESET} ${CYAN}[Angular 2+ file generator]${RESET}"
  echo -e ""
 }
 
@@ -310,8 +308,8 @@ function displayFinalProcess {
 
  displayHeader
 
- echo -e "               Initialisation..."
- echo -e "               File generation..."
+ echo -e "             Initialisation..."
+ echo -e "             File generation..."
 
  case $CURRENT_ELEMENT in
     "module")
@@ -381,7 +379,7 @@ function displayFinalProcess {
  esac
 
  echo -e ""
- echo -e "               ${GREEN}Creation complete !${RESET}"
+ echo -e "             ${GREEN}Creation complete !${RESET}"
  echo -e ""
  echo -e ""
  echo -e ""
@@ -389,18 +387,16 @@ function displayFinalProcess {
 
 # show name forms
 function displayNameForms {
+
  displayHeader
 
- echo -e "               ${LBLUE}1) Define name of "$CURRENT_ELEMENT"${RESET}"
+ echo -e "             ${PURPLE}Define name of "$CURRENT_ELEMENT" :${RESET}"
  echo -e ""
- echo -e "                ${YELLOW}Can not be empty."
- echo -e "                Use camelCase or dash-case.${RESET}"
- echo -e ""
- read -p $'               Enter name (and press enter) : ' element_names
+ echo -e "             ${YELLOW}Use camelCase or dash-case.${RESET}"
+ read -p '             Enter name (and press enter) : ' element_names
 
  if [ -z $element_names ]; then
-    clear
-    break
+    displayNameForms
  fi
 
  name=$element_names
@@ -438,13 +434,15 @@ function displayPathForms {
 
  displayHeader
 
- echo -e "               ${LBLUE}Define path of the" $CURRENT_ELEMENT ":${RESET}"
+ echo -e "             ${PURPLE}Define path of the" $CURRENT_ELEMENT ":${RESET}"
  echo -e ""
- read -p '               Enter path (and press enter) : src/app/' path_names
+ read -p '             Enter path (and press enter) : src/app/' path_names
 
  #on test si l'emplacement est vide
  if [ $path_names ]; then
-    TEMP_PATH=$path_names'/'
+    TEMP_PATH='src/app/'$path_names'/'
+    else
+    TEMP_PATH='src/app/'
  fi
 
  displayFinalProcess
@@ -455,18 +453,18 @@ function displayModuleMenu {
 
  displayHeader
 
- echo -e "               ${LBLUE}Choose module type :${RESET}"
+ echo -e "             ${PURPLE}Choose module type :${RESET}"
  echo -e ""
- echo -e "               ${YELLOW}1${RESET}  Basic (module, component, html, css)"
- echo -e "               ${YELLOW}2${RESET}  Basic with service"
- echo -e "               ${YELLOW}3${RESET}  Basic with routing"
- echo -e "               ${YELLOW}4${RESET}  Global (basic, service, routing)"
- echo -e "               ${YELLOW}5${RESET}  Module + component"
+ echo -e "              ${PURPLE}1${RESET}  Basic (module, component, html, css)"
+ echo -e "              ${PURPLE}2${RESET}  Basic with service"
+ echo -e "              ${PURPLE}3${RESET}  Basic with routing"
+ echo -e "              ${PURPLE}4${RESET}  Global (basic, service, routing)"
+ echo -e "              ${PURPLE}5${RESET}  Module + component"
  echo -e ""
- echo -e "               6  Back to main menu"
- echo -e "               7  Quit"
+ echo -e "              6  Back to main menu"
+ echo -e "              7  Quit"
  echo -e ""
- read -s -p "               Enter your choice [1-6] " -n1 choice
+ read -s -p "             Enter your choice [1-7] " -n1 choice
 
  CURRENT_ELEMENT='module'
 
@@ -505,16 +503,16 @@ function displayComponentMenu {
 
  displayHeader
 
- echo -e "               ${LBLUE}Choose component type :${RESET}"
+ echo -e "             ${PURPLE}Choose component type :${RESET}"
  echo -e ""
- echo -e "               ${YELLOW}1${RESET}  Basic (component, html, css)"
- echo -e "               ${YELLOW}2${RESET}  Basic with service"
- echo -e "               ${YELLOW}3${RESET}  Component only"
+ echo -e "              ${PURPLE}1${RESET}  Basic (component, html, css)"
+ echo -e "              ${PURPLE}2${RESET}  Basic with service"
+ echo -e "              ${PURPLE}3${RESET}  Component only"
  echo -e ""
- echo -e "               4  Back to main menu"
- echo -e "               5  Quit"
+ echo -e "              4  Back to main menu"
+ echo -e "              5  Quit"
  echo -e ""
- read -s -p "               Enter your choice [1-5] " -n1 choice
+ read -s -p "             Enter your choice [1-5] " -n1 choice
 
  CURRENT_ELEMENT='component'
 
@@ -544,16 +542,16 @@ function displayMainMenu {
 
  displayHeader
 
- echo -e "               ${LBLUE}Choose file to create : ${RESET}"
+ echo -e "             ${PURPLE}Choose file type : ${RESET}"
  echo -e ""
- echo -e "               ${YELLOW}1${RESET}  Module"
- echo -e "               ${YELLOW}2${RESET}  Component"
- echo -e "               ${YELLOW}3${RESET}  Service"
- echo -e "               ${YELLOW}4${RESET}  Directive"
+ echo -e "              ${PURPLE}1${RESET}  Module"
+ echo -e "              ${PURPLE}2${RESET}  Component"
+ echo -e "              ${PURPLE}3${RESET}  Service"
+ echo -e "              ${PURPLE}4${RESET}  Directive"
  echo -e ""
- echo -e "               ${YELLOW}5${RESET}  Quit"
+ echo -e "              ${PURPLE}5${RESET}  Quit"
  echo -e ""
- read -s -p "               Enter your choice [1-5] " -n1 choice
+ read -s -p "             Enter your choice [1-5] " -n1 choice
 
  case $choice in
     "1")
