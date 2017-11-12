@@ -8,8 +8,8 @@ Bash script for generate angular(2+) files
 
 ## Install 
 
-Add the script in the root folder of your Angular Project, near the src folder
-1
+Add the script in the root folder of your Angular Project, near the src folder.
+
 ##  Use
 
 In the Terminal of your IDE or computer, just enter :
