@@ -2,9 +2,9 @@
 
 Bash script for generate angular(2+) files
 
-![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator1.png)
-![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator4.png)
-![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator2.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/img/angulator1.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/img/angulator2.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/img/angulator3.png)
 
 ## Install 
 
