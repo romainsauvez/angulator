@@ -10,7 +10,7 @@
 # for your Angular project.
 #
 #
-# Put this script in the app folder of your
+# Put this script in the root folder of your
 # Angular project.
 #
 #####################################################################
