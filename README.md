@@ -2,12 +2,14 @@
 
 Bash script for generate angular(2+) files
 
-![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator1.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator2.png)
+![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator3.png)
 
 ## Install 
 
 Add the script in the root folder of your Angular Project, near the src folder
-
+1
 ##  Use
 
 In the Terminal of your IDE or computer, just enter :
