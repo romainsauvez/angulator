@@ -22,20 +22,20 @@ $ bash angulator.sh
 Generate angular(2+) files : 
 
 - Module
-  - Basic (module, component, html, css)
-  - Basic with service
-  - Basic with routing
-  - Global (basic, service, routing)
-  - Module + component only
+  - Module only
+  - Module full (compo/html/css/routing)
   
 - Component
-  - Basic (component, html, css)
-  - Basic with service
   - Component only
+  - Component full (html/css)
   
-- Service (basic)
+- Service
+  -Basic (angular 2/4/5)
+  -Root (angular 6+) : use {providedIn: 'root'} in @Injectable
+ 
+- Directive
 
-- Directive (basic)
+- Custom FormControl 
 
 
 ## Options
