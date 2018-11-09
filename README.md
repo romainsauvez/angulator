@@ -1,6 +1,6 @@
 # Angulator - Angular (2+) file generator
 
-Bash script for generate angular(2+) files
+Bash script for generate angular 2+ files
 
 ![alt text](https://github.com/romainsauvez/angulator/blob/master/angulator1.PNG)
 
