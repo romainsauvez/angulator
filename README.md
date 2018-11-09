@@ -30,8 +30,8 @@ Generate angular(2+) files :
   - Component full (html/css)
   
 - Service
-  -Basic (angular 2/4/5)
-  -Root (angular 6+) : use {providedIn: 'root'} in @Injectable
+  - Basic (angular 2/4/5)
+  - Root (angular 6+) : use {providedIn: 'root'} in @Injectable
  
 - Directive
 
