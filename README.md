@@ -47,10 +47,4 @@ Open the script in your text editor and modify :
 - CSS_FILE_TYPE : choose the css file type : css, scss, sass...(default:css)
 
 
-## Next
 
-  - add broadcaster file for event
-  - add basic route guard
-  - add basic master/detail module
-  - add more complete routing
-  
