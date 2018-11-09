@@ -448,7 +448,7 @@ fi
 function displayHeader {
  clear
  echo -e ""
- echo -e "          ${BOLD}${BLUE}ANGULATOR${RESET} ${CYAN}[Angular file generator]${RESET}"
+ echo -e "          ${BOLD}${CYAN}ANGULATOR${RESET} ${CYAN}[Angular file generator]${RESET}"
  echo -e ""
  echo -e ""
 }
