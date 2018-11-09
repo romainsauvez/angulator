@@ -1,7 +1,7 @@
-#!/bin/
+#!/bin/bash
 
 #####################################################################
-# ANGULATOR v1.0  --  Angular(2/4) file generator
+# ANGULATOR  --  Angular(2+) file generator
 #
 # autor: Romain Sauvez
 # github: https://github.com/romainsauvez/angulator
@@ -9,25 +9,23 @@
 # description : generate module, component, service and routing
 # for your Angular project.
 #
-#
-# Put this script in the root folder of your
+# Put this script in the app folder of your
 # Angular project.
+#
+# For install globaly : 
+# chmod +x angulator.sh
+# sudo cp angulator.sh /usr/local/bin/angulator
 #
 #####################################################################
 
-
-
-# OPTIONS ###########################################################
+# version of this script
+VERSION='1.0.0'
 
 # prefix for the component selector
 PREFIX_FOR_SELECTOR='app'
 
 # specify css file type (css, scss, sass..)
 CSS_FILE_TYPE='scss'
-
-#####################################################################
-
-
 
 # color
 PURPLE='\033[0;35m'
@@ -52,15 +50,22 @@ CURRENT_PATH=''
 # type element : module, component or service
 CURRENT_ELEMENT=''
 
-# should module/component contain service
-WITH_SERVICE=0
-
 # should module contain routing
 WITH_ROUTING=0
 
+# should component contain html template
 WITH_HTML=1
 
+# should module contain component
+WITH_COMPONENT=0
+
+# service name
 SERVICE_NAME=''
+
+ROOT_SERVICE=0
+
+# name of the config file
+CONFIG_FILE_NAME='angulator.cfg'
 
 # creation of html file
 function generateHtml {
@@ -68,13 +73,11 @@ function generateHtml {
  completeFilePath=$CURRENT_PATH$CURRENT_NAME'.component.html'
 
  touch $completeFilePath
- cat <<EOT >> $completeFilePath
-   <div style="color:red">$CURRENT_NAME_CAPITAL</div>
+cat <<EOT >> $completeFilePath
+<div style="color:red">$CURRENT_NAME_CAPITAL</div>
 
 EOT
-
 }
-
 
 # creation of css file
 function generateCss {
@@ -86,7 +89,75 @@ function generateCss {
 
 
 EOT
+}
 
+# generate custom form control
+function  generateCustomFormCtrl {
+
+generateHtml
+generateCss
+
+completeFilePath=$CURRENT_PATH$CURRENT_NAME'.component.ts'
+
+touch $completeFilePath
+
+cat <<EOT >> $completeFilePath
+import { Component, Input, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, NG_VALIDATORS, FormControl } from '@angular/forms';
+
+@Component({
+  selector: '$PREFIX_FOR_SELECTOR-$CURRENT_NAME',
+  templateUrl: './$CURRENT_NAME.component.html',
+  styleUrls:  ['./$CURRENT_NAME.component.$CSS_FILE_TYPE'],
+  providers: [
+    { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => ${CURRENT_NAME_CAPITAL}Component), multi: true },
+    { provide: NG_VALIDATORS, useExisting: forwardRef(() => ${CURRENT_NAME_CAPITAL}Component), multi: true }
+  ]
+})
+
+export class ${CURRENT_NAME_CAPITAL}Component implements ControlValueAccessor {
+
+  private _value: any;
+
+  @Input('value')
+  set value(val) {
+    this._value = val;
+    this.onChange(this._value);
+    this.onTouched();
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  onChange: any = () => { };
+  onTouched: any = () => { };
+  propagateChange: any = () => {};
+  validateFn: any = () => {};
+
+  constructor() {}
+
+  registerOnChange(fn) {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn) {
+    this.onTouched = fn;
+  }
+
+  writeValue(value) {
+    if (value) {
+      this.value = value;
+    }
+  }
+
+  validate(c: FormControl) {
+    return this.validateFn(c);
+  }
+
+}
+
+EOT
 }
 
 # creation of routing file
@@ -114,7 +185,6 @@ export class ${CURRENT_NAME_CAPITAL}RoutingModule {
 }
 
 EOT
-
 }
 
 # creation of directive file
@@ -140,6 +210,7 @@ export class ${CURRENT_NAME_CAPITAL}Directive {
 
 EOT
 }
+
 # creation of service file
 function generateService {
 
@@ -149,28 +220,33 @@ function generateService {
 
  cat <<EOT >> $completeFilePath
 import { Injectable } from '@angular/core';
+EOT
+if [ $ROOT_SERVICE -eq 1 ]; then
+cat <<EOT >> $completeFilePath
+
+@Injectable({
+  providedIn: 'root',
+})
+EOT
+else
+cat <<EOT >> $completeFilePath
 
 @Injectable()
+EOT
+fi
+cat <<EOT >> $completeFilePath
 export class ${CURRENT_NAME_CAPITAL}Service {
 
-  constructor() {
-
-  }
+  constructor() {}
 
 }
 
 
 EOT
-
 }
-
 
 # creation of component file
 function generateComponent {
-
- if [ $WITH_SERVICE -eq 1 ]; then
-    generateService
- fi
 
  if [ $WITH_HTML -eq 1 ]; then
     generateHtml
@@ -183,25 +259,11 @@ touch $completeFilePath
 
 cat <<EOT >> $completeFilePath
 import { Component } from '@angular/core';
-EOT
-
-if [ $WITH_SERVICE -eq 1 ]; then
-cat <<EOT >> $completeFilePath
-import { ${CURRENT_NAME_CAPITAL}Service } from './$CURRENT_NAME.service';
-EOT
-fi
-
-cat <<EOT >> $completeFilePath
 
 @Component({
   selector: '$PREFIX_FOR_SELECTOR-$CURRENT_NAME',
 EOT
 
-if [ $WITH_SERVICE -eq 1 ]; then
-cat <<EOT >> $completeFilePath
-  providers: [${CURRENT_NAME_CAPITAL}Service],
-EOT
-fi
 
 if [ $WITH_HTML -eq 1 ]; then
 cat <<EOT >> $completeFilePath
@@ -215,27 +277,13 @@ cat <<EOT >> $completeFilePath
 
 export class ${CURRENT_NAME_CAPITAL}Component {
 
-EOT
-
-
-if [ $WITH_SERVICE -eq 1 ]; then
-cat <<EOT >> $completeFilePath
-    constructor(private ${SERVICE_NAME}Service: ${CURRENT_NAME_CAPITAL}Service) {
-
-    }
-}
-EOT
-else
-cat <<EOT >> $completeFilePath
-    constructor() {
-
-    }
-}
-EOT
-fi
+    constructor() {}
 
 }
 
+
+EOT
+}
 
 # creation of module file
 function generateModule {
@@ -244,25 +292,37 @@ if [ $WITH_ROUTING -eq 1 ]; then
     generateRouting
 fi
 
-generateComponent
+if [ $WITH_COMPONENT -eq 1 ]; then
+    generateComponent
+fi
+
 
 completeFilePath=$CURRENT_PATH$CURRENT_NAME'.module.ts'
 
 touch $completeFilePath
 
 cat <<EOT >> $completeFilePath
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 EOT
 
 if [ $WITH_ROUTING -eq 1 ]; then
 cat <<EOT >> $completeFilePath
-import {${CURRENT_NAME_CAPITAL}RoutingModule} from './${CURRENT_NAME}-routing.module';
+import { ${CURRENT_NAME_CAPITAL}RoutingModule } from './${CURRENT_NAME}-routing.module';
+EOT
+fi
+
+if [ $WITH_COMPONENT -eq 1 ]; then
+cat <<EOT >> $completeFilePath
+import { ${CURRENT_NAME_CAPITAL}Component } from './$CURRENT_NAME.component';
+
+EOT
+else
+cat <<EOT >> $completeFilePath
+
 EOT
 fi
 
 cat <<EOT >> $completeFilePath
-import {${CURRENT_NAME_CAPITAL}Component} from './$CURRENT_NAME.component';
-
 @NgModule({
 EOT
 
@@ -278,34 +338,123 @@ cat <<EOT >> $completeFilePath
 EOT
 fi
 
+if [ $WITH_COMPONENT -eq 1 ]; then
 cat <<EOT >> $completeFilePath
     declarations: [
-        ${CURRENT_NAME_CAPITAL}Component
+      ${CURRENT_NAME_CAPITAL}Component
     ],
     exports: [
       ${CURRENT_NAME_CAPITAL}Component
     ]
+EOT
+else
+cat <<EOT >> $completeFilePath
+    declarations: [],
+    exports: []
+EOT
+fi
 
+cat <<EOT >> $completeFilePath
 })
+
 export class ${CURRENT_NAME_CAPITAL}Module {
 }
 
 
 EOT
+}
+
+# generate config file angulator.cfg
+function generateConfigFile {
+touch $CONFIG_FILE_NAME
+cat <<EOT >> $CONFIG_FILE_NAME
+prefix=$PREFIX_FOR_SELECTOR
+cssType=$CSS_FILE_TYPE
+EOT
+
+displayMainMenu
+}
+
+# write config file
+function writeConfig {
+ displayHeader
+
+ echo -e "             ${PURPLE}[Configuration 1/2]${RESET} Define prefix for component (default: app)"
+ echo -e ""
+ echo -e ""
+ read -p '             Enter prefix : ' prefix
+
+ #on test si l'emplacement est vide
+ if [ $prefix ]; then
+    PREFIX_FOR_SELECTOR=$prefix
+ else
+    PREFIX_FOR_SELECTOR='app'
+ fi
+
+ displayHeader
+
+ echo -e "             ${PURPLE}[Configuration 2/2]${RESET} Choose css type (default: scss)"
+ echo -e ""
+ echo -e "              ${PURPLE}1${RESET}  css"
+ echo -e "              ${PURPLE}2${RESET}  scss"
+ echo -e "              ${PURPLE}3${RESET}  sass"
+ echo -e ""
+ read -s -p "             Your choice [1-3] " -n1 choice
+
+case $choice in
+    "1")
+    CSS_FILE_TYPE='css'
+    ;;
+    "2")
+    CSS_FILE_TYPE='scss'
+    ;;
+    "3")
+    CSS_FILE_TYPE='sass'
+    ;;
+    *)
+    CSS_FILE_TYPE='scss'
+    ;;
+ esac
+
+rm $CONFIG_FILE_NAME
+generateConfigFile
 
 }
+
+#read the config file
+function readConfig {
+ . angulator.cfg
+
+ #parse data
+ CSS_FILE_TYPE=$cssType
+ PREFIX_FOR_SELECTOR=$prefix
+
+ displayMainMenu
+}
+
+#manage configuration
+function manageConfig {
+if [ -f angulator.cfg ]; then
+echo "file ok"
+ readConfig
+else
+echo "file ko"
+ writeConfig
+fi
+}
+
 
 # show header/title
 function displayHeader {
  clear
  echo -e ""
- echo -e "          ${BOLD}${BLUE}ANGULATOR${RESET} ${CYAN}[Angular 2+ file generator]${RESET}"
+ echo -e "          ${BOLD}${BLUE}ANGULATOR${RESET} ${CYAN}[Angular file generator]${RESET}"
+ echo -e ""
  echo -e ""
 }
 
 # creation of files
 function displayFinalProcess {
-
  displayHeader
 
  echo -e "             Initialisation..."
@@ -313,7 +462,6 @@ function displayFinalProcess {
 
  case $CURRENT_ELEMENT in
     "module")
-
         if [ $TEMP_PATH ]; then
             path=$TEMP_PATH$CURRENT_NAME'/'
         else
@@ -324,9 +472,7 @@ function displayFinalProcess {
 
         generateModule
         ;;
-
     "component")
-
         if [ $TEMP_PATH  ]; then
             if [ $WITH_HTML -eq 1 ]; then
                 path=$TEMP_PATH$CURRENT_NAME'/'
@@ -346,9 +492,7 @@ function displayFinalProcess {
 
         generateComponent
     ;;
-
     "service")
-
         if [ $TEMP_PATH ]; then
             path=$TEMP_PATH
             mkdir -p $path
@@ -361,7 +505,6 @@ function displayFinalProcess {
         generateService
     ;;
     "directive")
-
         if [ $TEMP_PATH ]; then
             path=$TEMP_PATH
             mkdir -p $path
@@ -373,8 +516,27 @@ function displayFinalProcess {
 
         generateDirective
     ;;
-    *)
+    "formControl")
+        if [ $TEMP_PATH  ]; then
+            if [ $WITH_HTML -eq 1 ]; then
+                path=$TEMP_PATH$CURRENT_NAME'/'
+            else
+                path=$TEMP_PATH'/'
+            fi
+        else
+            if [ $WITH_HTML -eq 1 ]; then
+                path=$CURRENT_NAME'/'
+            fi
+        fi
 
+        if [ $path ]; then
+            mkdir -p $path
+            CURRENT_PATH=$path
+        fi
+
+        generateCustomFormCtrl
+    ;;
+    *)
     ;;
  esac
 
@@ -383,11 +545,12 @@ function displayFinalProcess {
  echo -e ""
  echo -e ""
  echo -e ""
+ read -rsn1 -p"         --- Press any key to continue ---";
+ displayMainMenu
 }
 
 # show name forms
 function displayNameForms {
-
  displayHeader
 
  echo -e "             ${PURPLE}Define name of "$CURRENT_ELEMENT" :${RESET}"
@@ -430,8 +593,6 @@ for i in "${ROOTNAME[@]}"; do
 
 # show path forms
 function displayPathForms {
-
-
  displayHeader
 
  echo -e "             ${PURPLE}Define path of the" $CURRENT_ELEMENT ":${RESET}"
@@ -450,138 +611,199 @@ function displayPathForms {
 
 # show module menu
 function displayModuleMenu {
-
  displayHeader
 
  echo -e "             ${PURPLE}Choose module type :${RESET}"
  echo -e ""
- echo -e "              ${PURPLE}1${RESET}  Basic (module, component, html, css)"
- echo -e "              ${PURPLE}2${RESET}  Basic with service"
- echo -e "              ${PURPLE}3${RESET}  Basic with routing"
- echo -e "              ${PURPLE}4${RESET}  Global (basic, service, routing)"
- echo -e "              ${PURPLE}5${RESET}  Module + component"
+ echo -e "              ${PURPLE}1${RESET}  Module only"
+ echo -e "              ${PURPLE}2${RESET}  Module full (html/css/routing)"
  echo -e ""
- echo -e "              6  Back to main menu"
- echo -e "              7  Quit"
+ echo -e "              ${PURPLE}3${RESET}  Back"
  echo -e ""
- read -s -p "             Enter your choice [1-7] " -n1 choice
+ read -s -p "             Enter your choice [1-3] " -n1 choice
 
  CURRENT_ELEMENT='module'
 
  case $choice in
     "1")
-        displayNameForms
-        ;;
+     displayNameForms
+    ;;
     "2")
-        WITH_SERVICE=1
-        displayNameForms
+     WITH_COMPONENT=1
+     WITH_HTML=1
+     WITH_ROUTING=1
+     displayNameForms
     ;;
     "3")
-        WITH_ROUTING=1
-        displayNameForms
-    ;;
-    "4")
-        WITH_SERVICE=1
-        WITH_ROUTING=1
-        displayNameForms
-        ;;
-    "5")
-        WITH_HTML=0
-        displayNameForms
-        ;;
-    "6")
-        displayMainMenu
+     displayMainMenu
     ;;
     *)
-        clear
+     displayModuleMenu      
     ;;
 esac
 }
 
 # show component menu
 function displayComponentMenu {
-
  displayHeader
 
  echo -e "             ${PURPLE}Choose component type :${RESET}"
  echo -e ""
- echo -e "              ${PURPLE}1${RESET}  Basic (component, html, css)"
- echo -e "              ${PURPLE}2${RESET}  Basic with service"
- echo -e "              ${PURPLE}3${RESET}  Component only"
+ echo -e "              ${PURPLE}1${RESET}  Component only"
+ echo -e "              ${PURPLE}2${RESET}  Complet component (component, html, css)"
+
  echo -e ""
- echo -e "              4  Back to main menu"
- echo -e "              5  Quit"
+ echo -e "              ${PURPLE}3${RESET}  Back"
  echo -e ""
- read -s -p "             Enter your choice [1-5] " -n1 choice
+ read -s -p "             Enter your choice [1-3] " -n1 choice
 
  CURRENT_ELEMENT='component'
 
  case $choice in
     "1")
-        displayNameForms
-        ;;
+     WITH_HTML=0  
+     displayNameForms
+    ;;
     "2")
-        WITH_SERVICE=1
-        displayNameForms
+     WITH_HTML=1
+     displayNameForms
     ;;
     "3")
-        WITH_HTML=0
-        displayNameForms
+     displayMainMenu
+    ;;
+    *) 
+     displayComponentMenu     
+    ;;
+ esac
+}
+
+# show service menu
+function displayServiceMenu {
+ displayHeader
+
+ echo -e "             ${PURPLE}Configuration: choose service${RESET}"
+ echo -e ""
+ echo -e "              ${PURPLE}1${RESET}  Basic service"
+ echo -e "              ${PURPLE}2${RESET}  Root service (Angular 6+)"
+ echo -e ""
+ echo -e "              ${PURPLE}3${RESET}  Back"
+ echo -e "              ${PURPLE}4${RESET}  Quit"
+ echo -e ""
+ read -s -p "             Enter your choice [1-4] " -n1 choice
+
+ case $choice in
+    "1")
+    ROOT_SERVICE=0 
+    CURRENT_ELEMENT='service'
+    displayNameForms
+    ;;
+    "2")
+    ROOT_SERVICE=1
+    CURRENT_ELEMENT='service'
+    displayNameForms
+    ;;
+    "3")
+    displayMainMenu
     ;;
     "4")
-        displayMainMenu
+    clear
     ;;
     *)
-        clear
+    displayServiceMenu
+    ;;
+ esac
+}
+
+# show config menu
+function displayConfigMenu {
+ displayHeader
+
+ echo -e "             ${PURPLE}Configuration: choose process${RESET}"
+ echo -e ""
+ echo -e "              ${PURPLE}1${RESET}  Edit configuration"
+ echo -e ""
+ echo -e "              ${PURPLE}2${RESET}  Back"
+ echo -e "              ${PURPLE}3${RESET}  Quit"
+ echo -e ""
+ read -s -p "             Enter your choice [1-3] " -n1 choice
+
+ case $choice in
+    "1")
+    writeConfig  
+    ;;
+    "2")
+    displayMainMenu
+    ;;
+    "3")
+    clear
+    ;;
+    *)
+    displayConfigMenu
     ;;
  esac
 }
 
 # show main/first menu
 function displayMainMenu {
-
  displayHeader
 
  echo -e "             ${PURPLE}Choose file type : ${RESET}"
  echo -e ""
- echo -e "              ${PURPLE}1${RESET}  Module"
- echo -e "              ${PURPLE}2${RESET}  Component"
+ echo -e "              ${PURPLE}1${RESET}  Module\t\t ${PURPLE}4${RESET}  Directive"
+ echo -e "              ${PURPLE}2${RESET}  Component\t ${PURPLE}5${RESET}  Custom FormControl"
  echo -e "              ${PURPLE}3${RESET}  Service"
- echo -e "              ${PURPLE}4${RESET}  Directive"
  echo -e ""
- echo -e "              ${PURPLE}5${RESET}  Quit"
+ echo -e "              ${PURPLE}6${RESET}  Config"
+ echo -e "              ${PURPLE}7${RESET}  Quit"
  echo -e ""
- read -s -p "             Enter your choice [1-5] " -n1 choice
+ echo -e ""
+ read -s -p "             Enter your choice [1-7] " -n1 choice
 
  case $choice in
     "1")
-        displayModuleMenu
-        ;;
+     displayModuleMenu
+    ;;
     "2")
-        displayComponentMenu
+     displayComponentMenu
     ;;
     "3")
-        CURRENT_ELEMENT='service'
-        displayNameForms
+     displayServiceMenu
     ;;
     "4")
-        CURRENT_ELEMENT='directive'
-        displayNameForms
+     CURRENT_ELEMENT='directive'
+     displayNameForms
+    ;;
+    "5")
+     CURRENT_ELEMENT='formControl'
+     displayNameForms
+    ;;
+    "6")
+     displayConfigMenu
+    ;;
+    "7")
+     clear
     ;;
     *)
-        clear
+     displayMainMenu
     ;;
  esac
 }
 
-
+# startup application 
+function startup {
+ case $1 in
+    "-v")
+    echo ${VERSION}
+    ;;
+    "-env")
+    clear
+    ;;
+    *)
+    manageConfig
+    ;;
+ esac
+}
 
 # start application ==============================================
-
-displayMainMenu
-
+startup $1
 # ================================================================
-
-
-
-
