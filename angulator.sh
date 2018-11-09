@@ -616,7 +616,7 @@ function displayModuleMenu {
  echo -e "             ${PURPLE}Choose module type :${RESET}"
  echo -e ""
  echo -e "              ${PURPLE}1${RESET}  Module only"
- echo -e "              ${PURPLE}2${RESET}  Module full (html/css/routing)"
+ echo -e "              ${PURPLE}2${RESET}  Module full (compo/html/css/routing)"
  echo -e ""
  echo -e "              ${PURPLE}3${RESET}  Back"
  echo -e ""
@@ -650,7 +650,7 @@ function displayComponentMenu {
  echo -e "             ${PURPLE}Choose component type :${RESET}"
  echo -e ""
  echo -e "              ${PURPLE}1${RESET}  Component only"
- echo -e "              ${PURPLE}2${RESET}  Complet component (component, html, css)"
+ echo -e "              ${PURPLE}2${RESET}  Component full (html, css)"
 
  echo -e ""
  echo -e "              ${PURPLE}3${RESET}  Back"
